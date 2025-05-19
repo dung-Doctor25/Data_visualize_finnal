@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File CSV</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-container { max-width: 600px; margin: auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="file"] { width: 100%; padding: 8px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .message { margin-top: 20px; color: green; }
+        .error { color: red; }
+        h3 { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Upload File CSV để ETL</h2>
+
+        <!-- Form cho Job Descriptions -->
+        <h3>Job Descriptions</h3>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_jobs' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="job_descriptions">File Job Descriptions CSV:</label>
+                <input type="file" id="job_descriptions" name="job_descriptions" accept=".csv" required>
+            </div>
+            <button type="submit">Upload và Xử lý</button>
+        </form>
+
+        <!-- Form cho Benefits -->
+        <h3>Benefits</h3>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_benefits' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="benefits">File Benefits CSV:</label>
+                <input type="file" id="benefits" name="benefits" accept=".csv" required>
+            </div>
+            <button type="submit">Upload và Xử lý</button>
+        </form>
+
+        <!-- Form cho Skills -->
+        <h3>Skills</h3>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_skills' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="skills">File Skills CSV:</label>
+                <input type="file" id="skills" name="skills" accept=".csv" required>
+            </div>
+            <button type="submit">Upload và Xử lý</button>
+        </form>
+
+        <!-- Form cho Responsibilities -->
+        <h3>Responsibilities</h3>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_responsibilities' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="responsibilities">File Responsibilities CSV:</label>
+                <input type="file" id="responsibilities" name="responsibilities" accept=".csv" required>
+            </div>
+            <button type="submit">Upload và Xử lý</button>
+        </form>
+
+        {% if message %}
+            <div class="message">{{ message }}</div>
+        {% endif %}
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

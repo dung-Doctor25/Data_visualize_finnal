@@ -1,0 +1,176 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Market Dashboard</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7fa;
+            color: #2d3748;
+        }
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .dashboard-header h1 {
+            font-size: 2.2em;
+            margin: 0;
+            color: #1a202c;
+        }
+        .dashboard-header p {
+            font-size: 1.1em;
+            color: #718096;
+            margin: 8px 0;
+        }
+        .dashboard-nav {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .dashboard-nav a {
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .dashboard-nav a:hover {
+            background-color: #d010f1;
+        }
+        .dashboard-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .row-1, .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .chart-container:hover {
+            transform: translateY(-5px);
+        }
+        .chart-container h3 {
+            margin: 0 0 10px;
+            font-size: 1.4em;
+            color: #1a202c;
+        }
+        .chart-container p {
+            margin: 0 0 15px;
+            font-size: 0.9em;
+            color: #718096;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #edf2f7;
+            color: #2d3748;
+        }
+        td:hover {
+            background-color: #f7fafc;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+        @media (max-width: 1200px) {
+            .row-1, .row-2 {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Job Quality Dashboard |  Analysis</h1>
+                <p>Explore job trends by skills, qualifications, role experience, and salary by role and city</p>
+                <div class="dashboard-nav">
+                    <a href="{% url 'job_dashboard' %}">Job Analysis Dashboard</a>
+                    <a href="{% url 'candidate_dashboard' %}">Candidate Dashboard</a>
+                    <a href="{% url 'job_quality_analysis' %}">Job Quality Analysis</a>
+                </div>
+            </div>
+                
+        <div class="dashboard-grid">
+            <div class="row-1">
+                <div class="chart-container">
+                    <h3>Top 10 Skills in Demand</h3>
+                    <p>Number of unique job postings requiring each skill</p>
+                    <div id="benefit-treemap"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Benefit Treemap</h3>
+                    <p>Heatmap of job postings by qualification, sized by job count</p>
+                    <div id="job-growth-table"></div>
+                </div>
+            </div>
+            <div class="row-2">
+                <div class="chart-container">
+                    <h3>Top 20 Skills</h3>
+                    <p>Pivot table of salary growth rate by simplified role and binned experience</p>
+                    <div id="skills-barchart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Salary by Role and Quality</h3>
+                    <p>Table of average salary per job by role and city</p>
+                    <div id="salary-quality-table-analysis"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="{% static 'js/dash3/benefit_treemap_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/job_growth_table_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/salary_quality_table_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/skills_barchart_analysis.js' %}"></script>
+    <script>
+        // Nhận dữ liệu từ view Django
+        let candidateData = {{ candidate_data|safe }};
+        // Vẽ các chart
+        drawBenefitTreemapAnalysis(candidateData);
+        drawJobGrowthTable(candidateData.jobs);
+        drawResponsibilityBarchartAnalysis(candidateData);
+        drawSalaryQualityTableAnalysis(candidateData);
+    </script>
+</body>
+</html>
