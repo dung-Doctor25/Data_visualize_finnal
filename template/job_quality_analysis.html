@@ -1,0 +1,278 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Market Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7fa;
+            color: #2d3748;
+        }
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .dashboard-header h1 {
+            font-size: 2.2em;
+            margin: 0;
+            color: #1a202c;
+        }
+        .dashboard-header p {
+            font-size: 1.1em;
+            color: #718096;
+            margin: 8px 0;
+        }
+        .dashboard-nav {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .dashboard-nav a {
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .dashboard-nav a:hover {
+            background-color: #d010f1;
+        }
+        .dashboard-filter {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .dashboard-filter select {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background-color: white;
+            color: #2d3748;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s, border-color 0.3s;
+            min-width: 200px;
+        }
+        .dashboard-filter select:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #3182ce;
+        }
+        .dashboard-filter select:focus {
+            outline: none;
+            border-color: #d010f1;
+            box-shadow: 0 0 0 3px rgba(208, 16, 241, 0.2);
+        }
+        .dashboard-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .row-1, .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .chart-container:hover {
+            transform: translateY(-5px);
+        }
+        .chart-container h3 {
+            margin: 0 0 10px;
+            font-size: 1.4em;
+            color: #1a202c;
+        }
+        .chart-container p {
+            margin: 0 0 15px;
+            font-size: 0.9em;
+            color: #718096;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #edf2f7;
+            color: #2d3748;
+        }
+        td:hover {
+            background-color: #f7fafc;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+        @media (max-width: 1200px) {
+            .row-1, .row-2 {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                margin-bottom: 20px;
+            }
+            .dashboard-filter select {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Job Quality Dashboard | Analysis</h1>
+            <p>Explore job trends by skills, qualifications, role experience, and salary by role and city</p>
+            <div class="dashboard-nav">
+                <a href="{% url 'job_dashboard' %}">Job Analysis Dashboard</a>
+                <a href="{% url 'candidate_dashboard' %}">Candidate Dashboard</a>
+                <a href="{% url 'job_quality_analysis' %}">Job Quality Analysis</a>
+            </div>
+            <div class="dashboard-filter">
+                <select id="industry-filter">
+                    <option value="all">All Industries</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+        </div>
+                
+        <div class="dashboard-grid">
+            <div class="row-1">
+                <div class="chart-container">
+                    <h3>Common benefits</h3>
+                    
+                    <div id="benefit-treemap"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>The rate of increase in the number of jobs</h3>
+                    
+                    <div id="job-growth-table"></div>
+                </div>
+            </div>
+            <div class="row-2">
+                <div class="chart-container">
+                    <h3>Rank top 20 tasks by industry</h3>
+                    
+                    <div id="skills-barchart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Average salary for each job by degree</h3>
+                    
+                    <div id="salary-quality-table-analysis"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="{% static 'js/dash3/benefit_treemap_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/job_growth_table_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/salary_quality_table_analysis.js' %}"></script>
+    <script src="{% static 'js/dash3/skills_barchart_analysis.js' %}"></script>
+    <script>
+        // Receive data from Django view
+        let candidateData = {{ candidate_data|safe }};
+
+        // Function to clear existing charts
+        function clearCharts() {
+            d3.select("#benefit-treemap").selectAll("*").remove();
+            d3.select("#job-growth-table").selectAll("*").remove();
+            d3.select("#skills-barchart").selectAll("*").remove();
+            d3.select("#salary-quality-table-analysis").selectAll("*").remove();
+        }
+
+        // Function to get unique industries
+        function getUniqueIndustries(jobs) {
+            const industries = [...new Set(jobs.map(job => job.industry))].filter(Boolean);
+            return industries.sort();
+        }
+
+        // Populate industry filter
+        function populateIndustryFilter(jobs) {
+            const select = document.getElementById('industry-filter');
+            const industries = getUniqueIndustries(jobs);
+            industries.forEach(industry => {
+                const option = document.createElement('option');
+                option.value = industry;
+                option.textContent = industry;
+                select.appendChild(option);
+            });
+        }
+
+        // Filter data by industry
+function filterDataByIndustry(data, industry) {
+    if (industry === 'all') return data;
+
+    // Lọc jobs theo industry
+    const filteredJobs = data.jobs.filter(job => job.industry === industry);
+
+    // Lấy danh sách job_id sau khi lọc
+    const jobIds = new Set(filteredJobs.map(job => job['Job Id']));
+    console.log("Filtered Job IDs:", jobIds);
+    // Lọc các phần còn lại theo job_id
+    const filteredSkills = data.skills.filter(skill => jobIds.has(skill['Job Id']));
+    const filteredBenefits = data.benefits.filter(benefit => jobIds.has(benefit['Job Id']));
+    const filteredResponsibilities = data.responsibilities.filter(res => jobIds.has(res['Job Id']));
+
+    return {
+        ...data,
+        jobs: filteredJobs,
+        skills: filteredSkills,
+        benefits: filteredBenefits,
+        responsibilities: filteredResponsibilities,
+    };
+}
+
+
+        // Update all charts based on filtered data
+        function updateCharts(industry) {
+            // Clear existing charts
+            clearCharts();
+            // Filter data
+            const filteredData = filterDataByIndustry(candidateData, industry);
+            // Redraw charts
+            drawBenefitTreemapAnalysis(filteredData);
+            drawJobGrowthTable(filteredData.jobs);
+            drawResponsibilityBarchartAnalysis(filteredData);
+            drawSalaryQualityTableAnalysis(filteredData);
+        }
+
+        // Initialize filter and charts
+        populateIndustryFilter(candidateData.jobs);
+        updateCharts('all');
+
+        // Handle filter change
+        document.getElementById('industry-filter').addEventListener('change', (event) => {
+            const selectedIndustry = event.target.value;
+            updateCharts(selectedIndustry);
+        });
+    </script>
+</body>
+</html>
